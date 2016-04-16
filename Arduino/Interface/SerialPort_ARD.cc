@@ -15,13 +15,13 @@ int open_port(void)
 {
 	int fd; // file description for the serial port
 	
-	fd = open("/dev/ttyUSB0", O_RDWR | O_NOCTTY | O_NDELAY);
+	fd = open("/dev/ttyACM0", O_RDWR );
 	//fd = open("salida.txt", O_RDWR | O_NOCTTY | O_NDELAY);
 	
 	if(fd == -1) // if open is unsucessful
 	{
 		//perror("open_port: Unable to open /dev/ttyUSB0 - ");
-		printf("open_port: Unable to open /dev/ttyUSB0. \n");
+		printf("open_port: Unable to open /dev/ttyACM0. \n");
 	}
 	else
 	{
@@ -61,41 +61,38 @@ int query_modem(int fd)   // query modem with an AT command
 	
 	//Open the input_file
 	int fi;
-	fi = open("test.txt", O_RDWR | O_NOCTTY | O_NDELAY);
-	if(fi == -1) { // if open is unsucessful
-		//perror("open_port: Unable to open /dev/ttyS0 - ");
-		printf("open_port: Unable to open ttyUSB0. \n");
-	}
+	fi = open("entry.txt", O_RDWR | O_NOCTTY | O_NDELAY);
+	if(fi == -1) { printf("open_file: Unable to open entry. \n");}
 	else {
 		fcntl(fi, F_SETFL, 0);
-		printf("port is open.\n");
+		printf("entry is open.\n");
 	}
 	
+	//Open the check_file
+	int ff;
+	ff = open("exit.txt", O_RDWR | O_NOCTTY | O_NDELAY);
+	if(ff == -1) { printf("open_file: Unable to open exit. \n"); }
+	else {
+		fcntl(ff, F_SETFL, 0);
+		printf("file is open.\n");
+	}
+	
+	char test = 'a';
+	write(fd, &test, sizeof(char));
+	read(fd, &test, sizeof(char));
+	write(ff, &test, sizeof(char));
+	/*//Transfer data;
 	unsigned char send_bytes[1];
-	//Create byte array
+	unsigned char recived_bytes[1];
 	while( read(fi, send_bytes, 1) ){
-	
-	  write(fd, send_bytes, 1);  //Send data
-	  printf("Wrote the bytes. \n");
+
+	  write(fd, send_bytes, 1);
+	  //printf("Wrote the bytes. \n");
 	  
-	 /* // do the select
-	  n = select(fd + 1, &rdfs, NULL, NULL, &timeout);
-	  
-	  // check if an error has occured
-	  if(n < 0)
-	  {
-	  perror("select failed\n");
-	  }
-	  else if (n == 0)
-	  {
-	  puts("Timeout!");
-	  }
-	  else
-	  {
-	  printf("\nBytes detected on the port!\n");
-	  }
+	  read(fd, recived_bytes, 1);
+	  write(ff, recived_bytes, 1);
+
 	}*/
-	}
 
 	return 0;
 	
