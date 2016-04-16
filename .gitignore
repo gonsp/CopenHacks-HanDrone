@@ -23,3 +23,5 @@ Icon
 
 # -- LEAPMOTION ---------------------------------------
 /LeapMotion/lib/*
+/LeapMotion/include/*
+/LeapMotion/utils/*
