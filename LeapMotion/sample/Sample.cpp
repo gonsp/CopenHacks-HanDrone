@@ -12,53 +12,41 @@ public:
     virtual void onFrame(const Controller&);
 
 private:
-	double direction;
-	double power;
-	double turn;
+    double direction; // axis_y
+    double power; // axis_z
+    double turn; // axis_x
 
 };
 
 void SampleListener::onConnect(const Controller& controller) {
     cout << "Connected" << endl;
-    controller.enableGesture(Gesture::TYPE_SWIPE);
+    controller.enableGesture(Leap::Gesture::TYPE_CIRCLE);
+    controller.config().setFloat("Gesture.Circle.MinRadius", 10.0);
+    controller.config().save();
 }
 
 void SampleListener::onFrame(const Controller& controller) {
     const Frame frame = controller.frame();
-	if (frame.id() % 20 == 0) {
-		/*
-		cout
-			<< "Frame id: " << frame.id()
-        	<< ", timestamp: " << frame.timestamp()
-        	<< ", hands: " << frame.hands().count()
-        	<< ", fingers: " << frame.fingers().count()
-        	<< ", tools: " << frame.tools().count()
-        	<< ", gestures: " << frame.gestures().count() << endl;
-        	//*/
+    if (frame.gestures().count() > 0) {
 
-        Leap::Hand hand = frame.hands().leftmost();
+    }
 
-        direction = hand.palmNormal()[2];
-        power = hand.palmPosition()[1];
-        turn = hand.palmNormal()[0];
+    Leap::Hand hand = frame.hands().leftmost();
 
-        //cout <<hand.palmPosition()[1] <<endl;
-        cout <<direction <<endl <<power <<endl <<turn <<endl <<endl;
-	}
+    direction = hand.palmNormal()[2];
+    power = hand.palmPosition()[1];
+    turn = hand.palmNormal()[0];
+
+    cout <<direction <<endl <<power <<endl <<turn <<endl <<endl;
+
+
 }
 
 int main(int argc, char** argv) {
-	SampleListener listener;
-	Controller controller;
+    SampleListener listener;
+    Controller controller;
 
-	controller.addListener(listener);
-
-    //while(not controller.isConnected());
-
-    //cout << "Connected!" <<endl;
-
-
-
+    controller.addListener(listener);
 
     // Keep this process running until Enter is pressed
     cout << "Press Enter to quit..." << endl;
