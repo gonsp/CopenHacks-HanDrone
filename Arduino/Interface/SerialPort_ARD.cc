@@ -77,14 +77,14 @@ int query_modem(int fd)   // query modem with an AT command
 		printf("file is open.\n");
 	}
 	
-	char test = 'a';
+        /*char test = 'a';
 	write(fd, &test, sizeof(char));
 	read(fd, &test, sizeof(char));
-	write(ff, &test, sizeof(char));
-	/*//Transfer data;
-	unsigned char send_bytes[1];
-	unsigned char recived_bytes[1];
-	while( read(fi, send_bytes, 1) ){
+        write(ff, &test, sizeof(char));*/
+        //Transfer data;
+        char send_bytes[1];
+        char recived_bytes[1];
+        while(read(fi, send_bytes, 1)){
 
 	  write(fd, send_bytes, 1);
 	  //printf("Wrote the bytes. \n");
@@ -92,7 +92,7 @@ int query_modem(int fd)   // query modem with an AT command
 	  read(fd, recived_bytes, 1);
 	  write(ff, recived_bytes, 1);
 
-	}*/
+        }
 
 	return 0;
 	
