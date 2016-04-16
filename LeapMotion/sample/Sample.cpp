@@ -12,33 +12,43 @@ public:
     virtual void onFrame(const Controller&);
 
 private:
-    double direction; // axis_y
     double power; // axis_z
+    //double powerMax; // 400 // 350
+    //double powerMin; // 50  // 100
+    double direction; // axis_y
+    //double directionMax; // 0.8
+    //double directionMin; // 1
     double turn; // axis_x
+    //double turnMax; // 1
+    //double turnMin; // 1
 
 };
 
 void SampleListener::onConnect(const Controller& controller) {
     cout << "Connected" << endl;
     controller.enableGesture(Leap::Gesture::TYPE_CIRCLE);
-    controller.config().setFloat("Gesture.Circle.MinRadius", 10.0);
+    controller.config().setFloat("Gesture.Circle.MinRadius", 100.0);
     controller.config().save();
+
+
 }
 
 void SampleListener::onFrame(const Controller& controller) {
     const Frame frame = controller.frame();
-    if (frame.gestures().count() > 0) {
+    bool circle = false;
 
+    Leap::GestureList gestures = frame.gestures();
+    for(Leap::GestureList::const_iterator gl = gestures.begin(); gl != gestures.end(); gl++) {
+        if ((*gl).type() == Leap::Gesture::TYPE_CIRCLE) {
+            circle = true;
+        }
     }
 
     Leap::Hand hand = frame.hands().leftmost();
 
-    direction = hand.palmNormal()[2];
     power = hand.palmPosition()[1];
+    direction = hand.palmNormal()[2];
     turn = hand.palmNormal()[0];
-
-    cout <<direction <<endl <<power <<endl <<turn <<endl <<endl;
-
 
 }
 
