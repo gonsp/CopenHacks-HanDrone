@@ -87,6 +87,10 @@ void SampleListener::onFrame(const Controller& controller) {
             sendToArduino((int)axis_z);
 
             cout << "--------" << endl;
+        } else {
+            sendToArduino(255);
+            sendToArduino(255);
+            sendToArduino(255);
         }
 
         prescaler = 0;
