@@ -1,17 +1,18 @@
-//#include <iostream>
-#include <std::string.h>
+#include <iostream>
+#include <string.h>
 #include "Leap.h"
 
-#include <stdio.h> // standard input / output functions
-#include <std::string.h> // std::string function definitions
+#include <cstdio> // standard input / output functions
+//#include <string.h> // string function definitions
 #include <unistd.h> // UNIX standard function definitions
 #include <fcntl.h> // File control definitions
 #include <errno.h> // Error number definitions
 #include <termios.h> // POSIX terminal control definitionss
 #include <time.h>   // time calls
+#include <fstream>
 
 using namespace Leap;
-//using namespace std;
+using namespace std;
 
 int fd;
 
@@ -47,7 +48,7 @@ void SampleListener::onConnect(const Controller& controller) {
 
 void SampleListener::onFrame(const Controller& controller) {
     const Frame frame = controller.frame();
-    std::string circle = "0";
+    string circle = "0";
 
     Leap::GestureList gestures = frame.gestures();
     for(Leap::GestureList::const_iterator gl = gestures.begin(); gl != gestures.end(); gl++) {
@@ -60,20 +61,20 @@ void SampleListener::onFrame(const Controller& controller) {
 
     power = hand.palmPosition()[1];
     int powerInt = (int) (power * 100);
-    std::string powerStr = to_std::string(powerInt);
+    string powerStr = to_string(powerInt);
 
     direction = hand.palmNormal()[2];
     int directionInt = (int) (direction * 100);
-    std::string directionStr = to_std::string(directionInt);
+    string directionStr = to_string(directionInt);
 
     turn = hand.palmNormal()[0];
     int turnInt = (int) (turn * 100);
-    std::string turnStr = to_std::string(turnInt);
+    string turnStr = to_string(turnInt);
 
-    write(fd, turnStr, turnStr.size());
-    write(fd, directionStr, directionStr.size());
-    write(fd, powerInt, powerInt.size());
-    write(fd, circle, circle.size());
+    write(fd, turnStr, turnStr.length());
+    write(fd, directionStr, directionStr.length());
+    write(fd, powerStr, powerStr.length());
+    write(fd, circle, circle.length());
 
 }
 
@@ -141,3 +142,4 @@ int main(int argc, char** argv) {
 
     return 0;
 }
+
