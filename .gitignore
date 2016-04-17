@@ -22,8 +22,8 @@ Icon
 
 
 # -- LEAPMOTION ---------------------------------------
-/LeapMotion/lib/*
-/LeapMotion/include/*
-/LeapMotion/util/*
-/LeapMotion/sample/*
-!/LeapMotion/sample/Sample.cpp
+#/LeapMotion/lib/*
+#/LeapMotion/include/*
+#/LeapMotion/util/*
+#/LeapMotion/sample/*
+#!/LeapMotion/sample/Sample.cpp

@@ -1,4 +1,4 @@
-#include <iostream>
+//#include <iostream>
 #include <string.h>
 #include "Leap.h"
 
@@ -38,7 +38,7 @@ private:
 };
 
 void SampleListener::onConnect(const Controller& controller) {
-    cout << "Connected" << endl;
+    //cout << "Connected" << endl;
     controller.enableGesture(Leap::Gesture::TYPE_CIRCLE);
     controller.config().setFloat("Gesture.Circle.MinRadius", 100.0);
     controller.config().save();
@@ -73,7 +73,7 @@ void SampleListener::onFrame(const Controller& controller) {
     write(fd, turnStr, turnStr.size());
     write(fd, directionStr, directionStr.size());
     write(fd, powerInt, powerInt.size());
-    write(fd, cicle, cicle.size());
+    write(fd, circle, circle.size());
 
 }
 
@@ -134,7 +134,7 @@ int main(int argc, char** argv) {
     controller.addListener(listener);
 
     // Keep this process running until Enter is pressed
-    cout << "Press Enter to quit..." << endl;
+    //cout << "Press Enter to quit..." << endl;
     cin.get();
 
     controller.removeListener(listener);
