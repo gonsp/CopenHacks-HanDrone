@@ -7,8 +7,8 @@ Drone::Drone() {
 void Drone::setAction(HandInfo handinfo) {
     analogWrite(axis_x, handinfo.axis_x);
     analogWrite(axis_y, handinfo.axis_y);
-    Serial.println(max-handinfo.axis_z);
-    analogWrite(axis_z, max-handinfo.axis_z);
+    Serial.println(handinfo.axis_z);
+    analogWrite(axis_z, handinfo.axis_z);
 }
 
 void Drone::sync() {
