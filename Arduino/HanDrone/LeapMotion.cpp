@@ -3,28 +3,33 @@
 LeapMotion::LeapMotion() {
 }
 
-bool LeapMotion::refresh() {
+bool LeapMotion::read() {
     if(Serial.available()) {
-        last_handinfo.axis_x = atoi(readString());
-        last_handinfo.axis_y = atoi(readString());
-        last_handinfo.axis_z = atoi(readString());
-        last_handinfo.cercle = atoi(readString()) == 1;
+        char c = Serial.read();
+        if(c == '-') {
+            buffer[i] = '\0';
+            if(handinfo.done == 0) {
+                handinfo.axis_x = atoi(buffer);
+            } else if(handinfo.done == 1) {
+                handinfo.axis_y = atoi(buffer);
+            } else {
+                handinfo.axis_z = atoi(buffer);
+            }
+            ++handinfo.done;
+            i = 0;
+        } else {
+            buffer[i] = c;
+            ++i;
+        }
+    }
+    if(handinfo.done == 3) {
+        handinfo.done = 0;
         return true;
     } else {
         return false;
     }
 }
 
-char* LeapMotion::readString() {
-    int i = 0;
-    while(i < 30 && Serial.available()) {
-        buffer[i] = Serial.read();
-        ++i;
-        delay(10);
-    }
-    return buffer;
-}
-
 HandInfo LeapMotion::getHandInfo() const {
-    return last_handinfo;
+    return handinfo;
 }

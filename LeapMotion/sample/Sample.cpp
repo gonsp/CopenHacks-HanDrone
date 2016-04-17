@@ -14,7 +14,7 @@
 using namespace Leap;
 using namespace std;
 
-int fd;
+int prescaler = 0;
 
 //////////////////////////////// LEAP ////////////////////////////////
 
@@ -25,123 +25,78 @@ public:
     virtual void onFrame(const Controller&);
 
 private:
-    double power; // axis_z
-    //double powerMax; // 400 // 350
-    //double powerMin; // 50  // 100
-    double direction; // axis_y
-    //double directionMax; // -0.8
-    //double directionMin; // 1
-    double turn; // axis_x
-    //double turnMax; // -1
-    //double turnMin; // 1
-
 
 };
 
 void SampleListener::onConnect(const Controller& controller) {
-    //cout << "Connected" << endl;
+    cout << "Connected" << endl;
     controller.enableGesture(Leap::Gesture::TYPE_CIRCLE);
     controller.config().setFloat("Gesture.Circle.MinRadius", 100.0);
     controller.config().save();
 
 }
 
+void sendToArduino(int num) {
+    FILE *file;
+    file = fopen("/dev/ttyACM0", "w");
+    fprintf(file, "%d-", num); //Writing to the file
+    fclose(file);
+    file = fopen("/dev/ttyACM1", "w");
+    fprintf(file, "%d-", num); //Writing to the file
+    fclose(file);
+}
+
 void SampleListener::onFrame(const Controller& controller) {
+
     const Frame frame = controller.frame();
-    string circle = "0";
 
-    Leap::GestureList gestures = frame.gestures();
-    for(Leap::GestureList::const_iterator gl = gestures.begin(); gl != gestures.end(); gl++) {
-        if ((*gl).type() == Leap::Gesture::TYPE_CIRCLE) {
-            circle = "1";
+    if(prescaler >= 10) {
+        string circle = "0";
+
+        Leap::GestureList gestures = frame.gestures();
+        for(Leap::GestureList::const_iterator gl = gestures.begin(); gl != gestures.end(); gl++) {
+            if ((*gl).type() == Leap::Gesture::TYPE_CIRCLE) {
+                circle = "1";
+            }
         }
+
+        Leap::Hand hand = frame.hands().leftmost();
+
+        double axis_x = hand.palmNormal()[0];
+        double axis_y = hand.palmNormal()[2];
+        double axis_z = hand.palmPosition()[1];
+
+        if(axis_x != 0 || axis_y != 0 || axis_z != 0) {
+            axis_x = axis_x*128 + 127;
+            cout << axis_x << endl;
+            sendToArduino((int)axis_x);
+
+            axis_y = axis_y*128 + 127;
+            cout << axis_y << endl;
+            sendToArduino((int)axis_y);
+
+            if(axis_z > 80) {
+                axis_z = axis_z-80;
+            } else {
+                axis_z = 0;
+            }
+            if(axis_z > 255) {
+                axis_z = 255;
+            }
+            cout << axis_z << endl;
+            sendToArduino((int)axis_z);
+
+            cout << "--------" << endl;
+        }
+
+        prescaler = 0;
     }
-
-    Leap::Hand hand = frame.hands().leftmost();
-
-    power = hand.palmPosition()[1];
-    int powerInt = (int) (power * 100);
-    string powerStr = to_string(powerInt);
-
-    direction = hand.palmNormal()[2];
-    int directionInt = (int) (direction * 100);
-    string directionStr = to_string(directionInt);
-
-    turn = hand.palmNormal()[0];
-    int turnInt = (int) (turn * 100);
-    string turnStr = to_string(turnInt);
-
-
-
-
-	char ts[1024];
-	strcpy(ts, turnStr.c_str());
-	char ds[1024];
-	strcpy(ds, directionStr.c_str());
-	char ps[1024];
-	strcpy(ps, powerStr.c_str());
-	char cs[1024];
-	strcpy(cs, circle.c_str());
-
-
-
-
-    write(fd, ts, turnStr.length());
-    write(fd, ds, directionStr.length());
-    write(fd, ps, powerStr.length());
-    write(fd, cs, circle.length());
-
-}
-
-//////////////////////////////// PORT ////////////////////////////////
-
-int open_port(void)
-{
-    //int fd; // file description for the serial port
-
-    fd = open("/dev/ttyACM0", O_RDWR );
-    //fd = open("salida.txt", O_RDWR | O_NOCTTY | O_NDELAY);
-
-    if(fd == -1) // if open is unsucessful
-    {
-        //perror("open_port: Unable to open /dev/ttyUSB0 - ");
-        printf("open_port: Unable to open /dev/ttyACM0. \n");
-    }
-    else
-    {
-        fcntl(fd, F_SETFL, 0);
-        printf("port is open.\n");
-    }
-
-    return(fd);
-}
-
-int configure_port()      // configure the port
-{
-    struct termios port_settings;      // structure to store the port settings in
-
-    cfsetispeed(&port_settings, B115200);    // set baud rates
-    cfsetospeed(&port_settings, B115200);
-
-    port_settings.c_cflag &= ~PARENB;    // set no parity, stop bits, data bits
-    port_settings.c_cflag &= ~CSTOPB;
-    port_settings.c_cflag &= ~CSIZE;
-    port_settings.c_cflag |= CS8;
-
-    tcsetattr(fd, TCSANOW, &port_settings);    // apply the settings to the port
-    return(fd);
-
+    ++prescaler;
 }
 
 //////////////////////////////// MAIN ////////////////////////////////
 
 int main(int argc, char** argv) {
-
-    // PORT
-    fd = open_port();
-    configure_port();
-
-
 
     // LEAP
     SampleListener listener;

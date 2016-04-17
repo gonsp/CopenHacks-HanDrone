@@ -20,7 +20,7 @@ void setup() {
 }
 
 void loop() {
-    if(lm.refresh()) {
+    if(lm.read()) {
         drone.setAction(lm.getHandInfo());
     }
 }

@@ -13,6 +13,9 @@ private:
     const int default_axis_z = max;
     const int default_axis_y = max/2;
     const int defualt_axis_x = max/2;
+
+    int convert(int n);
+
 public:
     Drone();
     //void set_action(HandInfo handinfo);

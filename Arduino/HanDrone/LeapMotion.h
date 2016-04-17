@@ -4,20 +4,20 @@
 #include <Arduino.h>
 
 struct HandInfo {
-    double axis_x;
-    double axis_y;
-    double axis_z;
-    bool cercle;
+    int axis_x;
+    int axis_y;
+    int axis_z;
+    int done = 0;
 };
 
 class LeapMotion {
 private:
-    char buffer[30];
-    HandInfo last_handinfo;
-    char* readString();
+    char buffer[10];
+    int i = 0;
+    HandInfo handinfo;
 public:
     LeapMotion();
-    bool refresh();
+    bool read();
     HandInfo getHandInfo() const;
 };
 
