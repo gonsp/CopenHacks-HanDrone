@@ -1,26 +1,30 @@
 #include "LeapMotion.h"
 
 LeapMotion::LeapMotion() {
-    Serial.begin(9600);
 }
 
 bool LeapMotion::refresh() {
     if(Serial.available()) {
-        char buffer[30];
-        int i = 0;
-        while(i < 30 && Serial.available()) {
-            buffer[i] = Serial.read();
-            ++i;
-            delay(10);
-        }
-        buffer[i-1] = '\0';
-        //Serial.println(1);
+        last_handinfo.axis_x = atoi(readString());
+        last_handinfo.axis_y = atoi(readString());
+        last_handinfo.axis_z = atoi(readString());
+        last_handinfo.cercle = atoi(readString()) == 1;
         return true;
     } else {
         return false;
     }
 }
 
-double LeapMotion::string_to_double(char* s) {
+char* LeapMotion::readString() {
+    int i = 0;
+    while(i < 30 && Serial.available()) {
+        buffer[i] = Serial.read();
+        ++i;
+        delay(10);
+    }
+    return buffer;
+}
 
+HandInfo LeapMotion::getHandInfo() const {
+    return last_handinfo;
 }
