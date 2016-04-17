@@ -71,10 +71,25 @@ void SampleListener::onFrame(const Controller& controller) {
     int turnInt = (int) (turn * 100);
     string turnStr = to_string(turnInt);
 
-    write(fd, turnStr, turnStr.length());
-    write(fd, directionStr, directionStr.length());
-    write(fd, powerStr, powerStr.length());
-    write(fd, circle, circle.length());
+
+
+
+	char ts[1024];
+	strcpy(ts, turnStr.c_str());
+	char ds[1024];
+	strcpy(ds, directionStr.c_str());
+	char ps[1024];
+	strcpy(ps, powerStr.c_str());
+	char cs[1024];
+	strcpy(cs, circle.c_str());
+
+
+
+
+    write(fd, ts, turnStr.length());
+    write(fd, ds, directionStr.length());
+    write(fd, ps, powerStr.length());
+    write(fd, cs, circle.length());
 
 }
 
